@@ -3,9 +3,9 @@ package com.mgc.mazegame_client;
 import javafx.scene.control.TextField;
 
 public class MenuPaneContent {
-    private TextField ipTextField;
-    private TextField nickNameField;
-    private PlayButton playButton;
+    private static TextField ipTextField;
+    private static TextField nickNameField;
+    private static PlayButton playButton;
 
     public MenuPaneContent(){
         ipTextField = new TextField();
@@ -13,27 +13,24 @@ public class MenuPaneContent {
         playButton = new PlayButton();
     }
 
-    public TextField getIpTextField() {
+    public static TextField getIpTextField() {
         return ipTextField;
     }
 
-    public void setIpTextField(TextField ipTextField) {
-        this.ipTextField = ipTextField;
+    public void setIpTextField(TextField ipAddress) {
+        ipTextField = ipAddress;
     }
 
-    public TextField getNickNameField() {
+    public static TextField getNickNameField() {
         return nickNameField;
     }
 
-    public void setNickNameField(TextField nickNameField) {
-        this.nickNameField = nickNameField;
+    public void setNickNameField(TextField nickName) {
+        nickNameField = nickName;
     }
 
-    public PlayButton getPlayButton() {
+    public static PlayButton getPlayButton() {
         return playButton;
     }
 
-    public void setPlayButton(PlayButton playButton) {
-        this.playButton = playButton;
-    }
 }

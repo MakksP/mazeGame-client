@@ -23,6 +23,8 @@ public class ClientRun extends Application {
     public static final int SCREEN_WIDTH = 1600;
     public static final int SCREEN_HEIGHT = 900;
     public static final int MENU_PANE_VGAP = 15;
+    public static final int ELEMENT_WIDTH = 25;
+    public static final int ELEMENT_HEIGHT = 25;
     private static Stage mainStage;
 
     public static Stage getMainStage() {
