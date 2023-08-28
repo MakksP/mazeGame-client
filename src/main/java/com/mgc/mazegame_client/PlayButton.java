@@ -1,8 +1,11 @@
 package com.mgc.mazegame_client;
 
+import javafx.application.Platform;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.cbor.MappingJackson2CborHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,13 +20,35 @@ public class PlayButton extends Button {
             String playerName = MenuPaneContent.getNickNameField().getText();
 
             RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> response = restTemplate.postForEntity("http://" + ip + "/joinGame/" + playerName, null, String.class);
+            ResponseEntity<String> response = joinToTheGame(ip, playerName, restTemplate);
             String yourId = response.getBody();
 
-            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-            ResponseEntity<GameInfoPacket> gameInfoPacketResponseEntity = restTemplate.getForEntity("http://" + ip + "/getVisibleArea/" + yourId, GameInfoPacket.class);
-            GameInfoPacket gameInfoPacket = gameInfoPacketResponseEntity.getBody();
+            GamePaneContent gamePaneContent = new GamePaneContent(new FlowPane(), new GridPane(), new FlowPane());
+
+            Scene gameScene = new Scene(gamePaneContent.getMainGamePane(), ClientRun.SCREEN_WIDTH, ClientRun.SCREEN_HEIGHT);
+            ClientRun.getMainStage().setScene(gameScene);
+            Platform.runLater(() -> {
+                gamePaneContent.getMainGamePane().getChildren().add(gamePaneContent.getRightGamePane());
+                gamePaneContent.getMainGamePane().getChildren().add(gamePaneContent.getPlayersInfoPane());
+            });
+
+            GameInfoPacket gameInfoPacket = getGameInfo(ip, restTemplate, yourId);
 
         });
     }
+
+    private static GameInfoPacket getGameInfo(String ip, RestTemplate restTemplate, String yourId) {
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        ResponseEntity<GameInfoPacket> gameInfoPacketResponseEntity = restTemplate.getForEntity("http://" + ip + "/getVisibleArea/" + yourId, GameInfoPacket.class);
+        return gameInfoPacketResponseEntity.getBody();
+    }
+
+    private static ResponseEntity<String> joinToTheGame(String ip, String playerName, RestTemplate restTemplate) {
+        ResponseEntity<String> response = restTemplate.postForEntity("http://" + ip + "/joinGame/" + playerName, null, String.class);
+        return response;
+    }
+
+    Runnable getGameInfo = () -> {
+
+    };
 }
