@@ -8,10 +8,14 @@ import javafx.scene.layout.GridPane;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class PlayButton extends Button {
     public static final String playButtonText = "Play";
+    public static final int SCHEDULE_PERIOD_MS = 500;
 
     public PlayButton(){
         super(playButtonText);
@@ -27,13 +31,26 @@ public class PlayButton extends Button {
 
             Scene gameScene = new Scene(gamePaneContent.getMainGamePane(), ClientRun.SCREEN_WIDTH, ClientRun.SCREEN_HEIGHT);
             ClientRun.getMainStage().setScene(gameScene);
-            Platform.runLater(() -> {
-                gamePaneContent.getMainGamePane().getChildren().add(gamePaneContent.getRightGamePane());
-                gamePaneContent.getMainGamePane().getChildren().add(gamePaneContent.getPlayersInfoPane());
-            });
 
-            GameInfoPacket gameInfoPacket = getGameInfo(ip, restTemplate, yourId);
+            addGameAndPlayerInfoPanesToMainPane(gamePaneContent);
 
+            ScheduledExecutorService scheduleGettingInfo = Executors.newScheduledThreadPool(1);
+
+            Runnable getGameInfo = () -> {
+                GameInfoPacket gameInfoPacket = getGameInfo(ip, restTemplate, yourId);
+                Draw.drawPlayerVisibleArea(gameInfoPacket);
+            };
+
+            scheduleGettingInfo.scheduleAtFixedRate(getGameInfo, 0, SCHEDULE_PERIOD_MS, TimeUnit.MILLISECONDS);
+
+
+        });
+    }
+
+    private static void addGameAndPlayerInfoPanesToMainPane(GamePaneContent gamePaneContent) {
+        Platform.runLater(() -> {
+            gamePaneContent.getMainGamePane().getChildren().add(gamePaneContent.getRightGamePane());
+            gamePaneContent.getMainGamePane().getChildren().add(gamePaneContent.getPlayersInfoPane());
         });
     }
 
@@ -48,7 +65,5 @@ public class PlayButton extends Button {
         return response;
     }
 
-    Runnable getGameInfo = () -> {
 
-    };
 }
