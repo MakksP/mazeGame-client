@@ -38,7 +38,7 @@ public class PlayButton extends Button {
 
             Runnable getGameInfo = () -> {
                 GameInfoPacket gameInfoPacket = getGameInfo(ip, restTemplate, yourId);
-                Draw.drawPlayerVisibleArea(gameInfoPacket);
+                Draw.drawPlayerVisibleArea(gameInfoPacket, gamePaneContent.getRightGamePane());
             };
 
             scheduleGettingInfo.scheduleAtFixedRate(getGameInfo, 0, SCHEDULE_PERIOD_MS, TimeUnit.MILLISECONDS);
