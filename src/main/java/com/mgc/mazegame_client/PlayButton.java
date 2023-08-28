@@ -3,6 +3,7 @@ package com.mgc.mazegame_client;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +39,22 @@ public class PlayButton extends Button {
 
             Runnable getGameInfo = () -> {
                 GameInfoPacket gameInfoPacket = getGameInfo(ip, restTemplate, yourId);
+                Draw.clearVisibleAreaFromGamePane(gamePaneContent.getRightGamePane());
                 Draw.drawPlayerVisibleArea(gameInfoPacket, gamePaneContent.getRightGamePane());
             };
+
+            gameScene.setOnKeyPressed(event -> {
+                KeyCode pressedButton = event.getCode();
+                if (pressedButton == KeyCode.UP){
+
+                } else if (pressedButton == KeyCode.RIGHT){
+
+                } else if (pressedButton == KeyCode.DOWN){
+
+                } else if (pressedButton == KeyCode.LEFT){
+
+                }
+            });
 
             scheduleGettingInfo.scheduleAtFixedRate(getGameInfo, 0, SCHEDULE_PERIOD_MS, TimeUnit.MILLISECONDS);
 

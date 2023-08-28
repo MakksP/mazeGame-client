@@ -9,6 +9,8 @@ import java.util.List;
 
 public class Draw {
 
+    public static final int FIRST_NOT_EMPTY_ELEMENT_INDEX = 2736;
+
     public static void drawPlayerVisibleArea(GameInfoPacket gameInfoPacket, GridPane gamePane){
         for (List<VisibleAreaMapPoint> elementsInRow : gameInfoPacket.mapVisibleAreaRepresentation){
             for (VisibleAreaMapPoint singleElement : elementsInRow){
@@ -23,6 +25,12 @@ public class Draw {
                 }
 
             }
+        }
+    }
+
+    public static void clearVisibleAreaFromGamePane(GridPane gamePane){
+        for (int currentElementIndexToDelete = gamePane.getChildren().size() - 1; currentElementIndexToDelete >= FIRST_NOT_EMPTY_ELEMENT_INDEX; currentElementIndexToDelete--){
+            gamePane.getChildren().remove(currentElementIndexToDelete);
         }
     }
 
