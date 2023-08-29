@@ -16,11 +16,11 @@ public class Draw {
             for (VisibleAreaMapPoint singleElement : elementsInRow){
                 if (elementIsWall(singleElement)){
                     Platform.runLater(() -> {
-                        gamePane.add(generateImage("/gameImages/wall.png"), singleElement.getElementCords().getY(), singleElement.getElementCords().getX());
+                        gamePane.add(generateImage("/gameImages/wall.png"), singleElement.getElementCords().getX(), singleElement.getElementCords().getY());
                     });
                 } else if (elementIsPlayer(singleElement)) {
                     Platform.runLater(() -> {
-                        gamePane.add(generateImage("/gameImages/player" + singleElement.getElement() + ".png"), singleElement.getElementCords().getY(), singleElement.getElementCords().getX());
+                        gamePane.add(generateImage("/gameImages/player" + singleElement.getElement() + ".png"), singleElement.getElementCords().getX(), singleElement.getElementCords().getY());
                     });
                 }
 
