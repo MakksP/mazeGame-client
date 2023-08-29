@@ -9,19 +9,15 @@ import java.util.List;
 
 public class Draw {
 
-    public static final int FIRST_NOT_EMPTY_ELEMENT_INDEX = 2736;
+    public static final int FIRST_NOT_EMPTY_ELEMENT_INDEX = 1715;
 
     public static void drawPlayerVisibleArea(GameInfoPacket gameInfoPacket, GridPane gamePane){
         for (List<VisibleAreaMapPoint> elementsInRow : gameInfoPacket.mapVisibleAreaRepresentation){
             for (VisibleAreaMapPoint singleElement : elementsInRow){
                 if (elementIsWall(singleElement)){
-                    Platform.runLater(() -> {
                         gamePane.add(generateImage("/gameImages/wall.png"), singleElement.getElementCords().getX(), singleElement.getElementCords().getY());
-                    });
                 } else if (elementIsPlayer(singleElement)) {
-                    Platform.runLater(() -> {
                         gamePane.add(generateImage("/gameImages/player" + singleElement.getElement() + ".png"), singleElement.getElementCords().getX(), singleElement.getElementCords().getY());
-                    });
                 }
 
             }

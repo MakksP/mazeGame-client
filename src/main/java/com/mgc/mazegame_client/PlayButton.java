@@ -1,22 +1,24 @@
 package com.mgc.mazegame_client;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.util.Duration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 public class PlayButton extends Button {
     public static final String playButtonText = "Play";
-    public static final int SCHEDULE_PERIOD_MS = 500;
+    public static final int SCHEDULE_PERIOD_MS = 100;
 
     public PlayButton(){
         super(playButtonText);
@@ -25,8 +27,8 @@ public class PlayButton extends Button {
             String playerName = MenuPaneContent.getNickNameField().getText();
 
             RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> response = joinToTheGame(ip, playerName, restTemplate);
-            String yourId = response.getBody();
+            AtomicReference<ResponseEntity<String>> response = new AtomicReference<>(joinToTheGame(ip, playerName, restTemplate));
+            String yourId = response.get().getBody();
 
             GamePaneContent gamePaneContent = new GamePaneContent(new FlowPane(), new GridPane(), new FlowPane());
 
@@ -35,38 +37,41 @@ public class PlayButton extends Button {
 
             addGameAndPlayerInfoPanesToMainPane(gamePaneContent);
 
-            ScheduledExecutorService scheduleGettingInfo = Executors.newScheduledThreadPool(1);
+            gameScene.setOnKeyPressed(event -> {
+                serveMoveRequest(ip, restTemplate, response, yourId, event);
+            });
 
-            Runnable getGameInfo = () -> {
+            KeyFrame refreshGame = new KeyFrame(Duration.millis(SCHEDULE_PERIOD_MS), event -> {
                 GameInfoPacket gameInfoPacket = getGameInfo(ip, restTemplate, yourId);
                 Draw.clearVisibleAreaFromGamePane(gamePaneContent.getRightGamePane());
                 Draw.drawPlayerVisibleArea(gameInfoPacket, gamePaneContent.getRightGamePane());
-            };
-
-            gameScene.setOnKeyPressed(event -> {
-                KeyCode pressedButton = event.getCode();
-                if (pressedButton == KeyCode.UP){
-
-                } else if (pressedButton == KeyCode.RIGHT){
-
-                } else if (pressedButton == KeyCode.DOWN){
-
-                } else if (pressedButton == KeyCode.LEFT){
-
-                }
             });
 
-            scheduleGettingInfo.scheduleAtFixedRate(getGameInfo, 0, SCHEDULE_PERIOD_MS, TimeUnit.MILLISECONDS);
-
+            Timeline scheduleRefreshGame = new Timeline(refreshGame);
+            scheduleRefreshGame.setCycleCount(Timeline.INDEFINITE);
+            scheduleRefreshGame.play();
 
         });
+
+
+    }
+
+    private static void serveMoveRequest(String ip, RestTemplate restTemplate, AtomicReference<ResponseEntity<String>> response, String yourId, KeyEvent event) {
+        KeyCode pressedButton = event.getCode();
+        if (pressedButton == KeyCode.UP){
+            response.set(restTemplate.postForEntity("http://" + ip + "/move/up/" + yourId, null, String.class));
+        } else if (pressedButton == KeyCode.RIGHT){
+            response.set(restTemplate.postForEntity("http://" + ip + "/move/right/" + yourId, null, String.class));
+        } else if (pressedButton == KeyCode.DOWN){
+            response.set(restTemplate.postForEntity("http://" + ip + "/move/down/" + yourId, null, String.class));
+        } else if (pressedButton == KeyCode.LEFT){
+            response.set(restTemplate.postForEntity("http://" + ip + "/move/left/" + yourId, null, String.class));
+        }
     }
 
     private static void addGameAndPlayerInfoPanesToMainPane(GamePaneContent gamePaneContent) {
-        Platform.runLater(() -> {
-            gamePaneContent.getMainGamePane().getChildren().add(gamePaneContent.getRightGamePane());
-            gamePaneContent.getMainGamePane().getChildren().add(gamePaneContent.getPlayersInfoPane());
-        });
+        gamePaneContent.getMainGamePane().getChildren().add(gamePaneContent.getRightGamePane());
+        gamePaneContent.getMainGamePane().getChildren().add(gamePaneContent.getPlayersInfoPane());
     }
 
     private static GameInfoPacket getGameInfo(String ip, RestTemplate restTemplate, String yourId) {
