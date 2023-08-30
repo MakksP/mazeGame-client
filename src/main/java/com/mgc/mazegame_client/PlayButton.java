@@ -13,12 +13,18 @@ import javafx.util.Duration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
+
+import java.security.Key;
 import java.util.concurrent.atomic.AtomicReference;
 
 
 public class PlayButton extends Button {
     public static final String playButtonText = "Play";
     public static final int SCHEDULE_PERIOD_MS = 100;
+    private static boolean upButtonPressed = false;
+    private static boolean leftButtonPressed = false;
+    private static boolean downButtonPressed = false;
+    private static boolean rightButtonPressed = false;
 
     public PlayButton(){
         super(playButtonText);
@@ -41,6 +47,10 @@ public class PlayButton extends Button {
                 serveMoveRequest(ip, restTemplate, response, yourId, event);
             });
 
+            gameScene.setOnKeyReleased(event -> {
+                serveButtonReleased(event);
+            });
+
             KeyFrame refreshGame = new KeyFrame(Duration.millis(SCHEDULE_PERIOD_MS), event -> {
                 GameInfoPacket gameInfoPacket = getGameInfo(ip, restTemplate, yourId);
                 Draw.clearVisibleAreaFromGamePane(gamePaneContent.getRightGamePane());
@@ -56,15 +66,32 @@ public class PlayButton extends Button {
 
     }
 
+    private void serveButtonReleased(KeyEvent event) {
+        KeyCode releasedButton = event.getCode();
+        if (releasedButton == KeyCode.UP){
+            upButtonPressed = false;
+        } else if (releasedButton == KeyCode.RIGHT){
+            rightButtonPressed = false;
+        } else if (releasedButton == KeyCode.DOWN){
+            downButtonPressed = false;
+        } else if (releasedButton == KeyCode.LEFT){
+            leftButtonPressed = false;
+        }
+    }
+
     private static void serveMoveRequest(String ip, RestTemplate restTemplate, AtomicReference<ResponseEntity<String>> response, String yourId, KeyEvent event) {
         KeyCode pressedButton = event.getCode();
-        if (pressedButton == KeyCode.UP){
+        if (pressedButton == KeyCode.UP && !upButtonPressed){
+            upButtonPressed = true;
             response.set(restTemplate.postForEntity("http://" + ip + "/move/up/" + yourId, null, String.class));
-        } else if (pressedButton == KeyCode.RIGHT){
+        } else if (pressedButton == KeyCode.RIGHT && !rightButtonPressed){
+            rightButtonPressed = true;
             response.set(restTemplate.postForEntity("http://" + ip + "/move/right/" + yourId, null, String.class));
-        } else if (pressedButton == KeyCode.DOWN){
+        } else if (pressedButton == KeyCode.DOWN && !downButtonPressed){
+            downButtonPressed = true;
             response.set(restTemplate.postForEntity("http://" + ip + "/move/down/" + yourId, null, String.class));
-        } else if (pressedButton == KeyCode.LEFT){
+        } else if (pressedButton == KeyCode.LEFT && !leftButtonPressed){
+            leftButtonPressed = true;
             response.set(restTemplate.postForEntity("http://" + ip + "/move/left/" + yourId, null, String.class));
         }
     }
