@@ -57,13 +57,16 @@ public class PlayButton extends Button {
                 Draw.drawPlayerVisibleArea(gameInfoPacket, gamePaneContent.getRightGamePane());
             });
 
+            ClientRun.getMainStage().setOnCloseRequest(windowEvent -> {
+                ResponseEntity<GameInfoPacket> leaveResponse = restTemplate.postForEntity("http://" + ip + "/leaveGame/" + yourId, null, GameInfoPacket.class);
+                System.exit(0);
+            });
+
             Timeline scheduleRefreshGame = new Timeline(refreshGame);
             scheduleRefreshGame.setCycleCount(Timeline.INDEFINITE);
             scheduleRefreshGame.play();
 
         });
-
-
     }
 
     private void serveButtonReleased(KeyEvent event) {
