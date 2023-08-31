@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class PlayButton extends Button {
     public static final String playButtonText = "Play";
-    public static final int SCHEDULE_PERIOD_MS = 100;
+    public static final int SCHEDULE_PERIOD_MS = 50;
     private static boolean upButtonPressed = false;
     private static boolean leftButtonPressed = false;
     private static boolean downButtonPressed = false;
@@ -51,25 +51,36 @@ public class PlayButton extends Button {
                 serveButtonReleased(event);
             });
 
-            KeyFrame refreshGame = new KeyFrame(Duration.millis(SCHEDULE_PERIOD_MS), event -> {
-                GameInfoPacket gameInfoPacket = getGameInfo(ip, restTemplate, yourId);
-                Platform.runLater(() -> {
-                    Draw.clearVisibleAreaFromGamePane(gamePaneContent.getRightGamePane());
-                    Draw.drawPlayerVisibleArea(gameInfoPacket, gamePaneContent.getRightGamePane());
-                });
-
-            });
-
-            ClientRun.getMainStage().setOnCloseRequest(windowEvent -> {
-                ResponseEntity<GameInfoPacket> leaveResponse = restTemplate.postForEntity("http://" + ip + "/leaveGame/" + yourId, null, GameInfoPacket.class);
-                System.exit(0);
-            });
-
-            Timeline scheduleRefreshGame = new Timeline(refreshGame);
-            scheduleRefreshGame.setCycleCount(Timeline.INDEFINITE);
-            scheduleRefreshGame.play();
+            KeyFrame refreshGame = servePacketFromServerAndDrawAccualGameState(ip, restTemplate, yourId, gamePaneContent);
+            serveGameLeave(ip, restTemplate, yourId);
+            configureAndStartScheduler(refreshGame);
 
         });
+    }
+
+    private static void configureAndStartScheduler(KeyFrame refreshGame) {
+        Timeline scheduleRefreshGame = new Timeline(refreshGame);
+        scheduleRefreshGame.setCycleCount(Timeline.INDEFINITE);
+        scheduleRefreshGame.play();
+    }
+
+    private static void serveGameLeave(String ip, RestTemplate restTemplate, String yourId) {
+        ClientRun.getMainStage().setOnCloseRequest(windowEvent -> {
+            ResponseEntity<GameInfoPacket> leaveResponse = restTemplate.postForEntity("http://" + ip + "/leaveGame/" + yourId, null, GameInfoPacket.class);
+            System.exit(0);
+        });
+    }
+
+    private static KeyFrame servePacketFromServerAndDrawAccualGameState(String ip, RestTemplate restTemplate, String yourId, GamePaneContent gamePaneContent) {
+        KeyFrame refreshGame = new KeyFrame(Duration.millis(SCHEDULE_PERIOD_MS), event -> {
+            GameInfoPacket gameInfoPacket = getGameInfo(ip, restTemplate, yourId);
+            Platform.runLater(() -> {
+                Draw.clearVisibleAreaFromGamePane(gamePaneContent.getRightGamePane());
+                Draw.drawPlayerVisibleArea(gameInfoPacket, gamePaneContent.getRightGamePane());
+            });
+
+        });
+        return refreshGame;
     }
 
     private void serveButtonReleased(KeyEvent event) {

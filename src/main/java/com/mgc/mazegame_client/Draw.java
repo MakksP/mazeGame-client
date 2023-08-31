@@ -12,17 +12,27 @@ public class Draw {
 
     public static void drawPlayerVisibleArea(GameInfoPacket gameInfoPacket, GridPane gamePane){
         Image wallImage = generateImage("/gameImages/wall.png");
+        Image beast = generateImage("/gameImages/beast.png");
         for (List<VisibleAreaMapPoint> elementsInRow : gameInfoPacket.mapVisibleAreaRepresentation){
             for (VisibleAreaMapPoint singleElement : elementsInRow){
                 if (elementIsWall(singleElement)){
-                    gamePane.add(new ImageView(wallImage), singleElement.getElementCords().getX(), singleElement.getElementCords().getY());
+                    drawElementInXYPosition(gamePane, singleElement, wallImage);
                 } else if (elementIsPlayer(singleElement)) {
                     Image player = generateImage("/gameImages/player" + singleElement.getElement() + ".png");
-                    gamePane.add(new ImageView(player), singleElement.getElementCords().getX(), singleElement.getElementCords().getY());
+                    drawElementInXYPosition(gamePane, singleElement, player);
+                } else if (elementIsBeast(singleElement)){
+                    drawElementInXYPosition(gamePane, singleElement, beast);
                 }
-
             }
         }
+    }
+
+    private static void drawElementInXYPosition(GridPane gamePane, VisibleAreaMapPoint singleElement, Image image) {
+        gamePane.add(new ImageView(image), singleElement.getElementCords().getX(), singleElement.getElementCords().getY());
+    }
+
+    private static boolean elementIsBeast(VisibleAreaMapPoint singleElement) {
+        return singleElement.getElement() == '*';
     }
 
     public static void clearVisibleAreaFromGamePane(GridPane gamePane){
