@@ -1,6 +1,5 @@
 package com.mgc.mazegame_client;
 
-import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -12,12 +11,14 @@ public class Draw {
     public static final int FIRST_NOT_EMPTY_ELEMENT_INDEX = 1715;
 
     public static void drawPlayerVisibleArea(GameInfoPacket gameInfoPacket, GridPane gamePane){
+        Image wallImage = generateImage("/gameImages/wall.png");
         for (List<VisibleAreaMapPoint> elementsInRow : gameInfoPacket.mapVisibleAreaRepresentation){
             for (VisibleAreaMapPoint singleElement : elementsInRow){
                 if (elementIsWall(singleElement)){
-                        gamePane.add(generateImage("/gameImages/wall.png"), singleElement.getElementCords().getX(), singleElement.getElementCords().getY());
+                    gamePane.add(new ImageView(wallImage), singleElement.getElementCords().getX(), singleElement.getElementCords().getY());
                 } else if (elementIsPlayer(singleElement)) {
-                        gamePane.add(generateImage("/gameImages/player" + singleElement.getElement() + ".png"), singleElement.getElementCords().getX(), singleElement.getElementCords().getY());
+                    Image player = generateImage("/gameImages/player" + singleElement.getElement() + ".png");
+                    gamePane.add(new ImageView(player), singleElement.getElementCords().getX(), singleElement.getElementCords().getY());
                 }
 
             }
@@ -38,8 +39,7 @@ public class Draw {
         return singleElement.getElement() == '1' || singleElement.getElement() == '2' || singleElement.getElement() == '3' || singleElement.getElement() == '4';
     }
 
-    public static ImageView generateImage(String path){
-        Image image = new Image(Draw.class.getResourceAsStream(path));
-        return new ImageView(image);
+    public static Image generateImage(String path){
+        return new Image(Draw.class.getResourceAsStream(path));
     }
 }

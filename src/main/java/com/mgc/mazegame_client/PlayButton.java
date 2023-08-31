@@ -53,8 +53,11 @@ public class PlayButton extends Button {
 
             KeyFrame refreshGame = new KeyFrame(Duration.millis(SCHEDULE_PERIOD_MS), event -> {
                 GameInfoPacket gameInfoPacket = getGameInfo(ip, restTemplate, yourId);
-                Draw.clearVisibleAreaFromGamePane(gamePaneContent.getRightGamePane());
-                Draw.drawPlayerVisibleArea(gameInfoPacket, gamePaneContent.getRightGamePane());
+                Platform.runLater(() -> {
+                    Draw.clearVisibleAreaFromGamePane(gamePaneContent.getRightGamePane());
+                    Draw.drawPlayerVisibleArea(gameInfoPacket, gamePaneContent.getRightGamePane());
+                });
+
             });
 
             ClientRun.getMainStage().setOnCloseRequest(windowEvent -> {
