@@ -77,6 +77,7 @@ public class PlayButton extends Button {
             Platform.runLater(() -> {
                 Draw.clearVisibleAreaFromGamePane(gamePaneContent.getRightGamePane());
                 Draw.drawPlayerVisibleArea(gameInfoPacket, gamePaneContent.getRightGamePane());
+                gamePaneContent.updatePlayersInfoPane(gameInfoPacket.playerList);
             });
 
         });
