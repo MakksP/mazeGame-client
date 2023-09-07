@@ -25,12 +25,4 @@ public class Player {
 
     }
 
-    public Cords getPlayerCords() {
-        return playerCords;
-    }
-
-    public int getNumber() {
-        return number;
-    }
-
 }
