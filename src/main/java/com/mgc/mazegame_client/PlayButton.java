@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class PlayButton extends Button {
     public static final String playButtonText = "Play";
-    public static final int SCHEDULE_PERIOD_MS = 50;
+    public static final int SCHEDULE_PERIOD_MS = 40;
     private static boolean upButtonPressed = false;
     private static boolean leftButtonPressed = false;
     private static boolean downButtonPressed = false;
@@ -74,11 +74,9 @@ public class PlayButton extends Button {
     private static KeyFrame servePacketFromServerAndDrawAccualGameState(String ip, RestTemplate restTemplate, String yourId, GamePaneContent gamePaneContent) {
         KeyFrame refreshGame = new KeyFrame(Duration.millis(SCHEDULE_PERIOD_MS), event -> {
             GameInfoPacket gameInfoPacket = getGameInfo(ip, restTemplate, yourId);
-            Platform.runLater(() -> {
-                Draw.clearVisibleAreaFromGamePane(gamePaneContent.getRightGamePane());
-                Draw.drawPlayerVisibleArea(gameInfoPacket, gamePaneContent.getRightGamePane());
-                gamePaneContent.updatePlayersInfoPane(gameInfoPacket.playerList);
-            });
+            Draw.clearVisibleAreaFromGamePane(gamePaneContent.getRightGamePane());
+            Draw.drawPlayerVisibleArea(gameInfoPacket, gamePaneContent.getRightGamePane());
+            gamePaneContent.updatePlayersInfoPane(gameInfoPacket.playerList);
 
         });
         return refreshGame;

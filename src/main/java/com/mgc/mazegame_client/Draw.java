@@ -13,21 +13,25 @@ public class Draw {
     public static void drawPlayerVisibleArea(GameInfoPacket gameInfoPacket, GridPane gamePane){
         for (List<VisibleAreaMapPoint> elementsInRow : gameInfoPacket.mapVisibleAreaRepresentation){
             for (VisibleAreaMapPoint singleElement : elementsInRow){
-                if (elementIsWall(singleElement)){
-                    drawElementInXYPosition(gamePane, singleElement, GameImages.wall);
-                } else if (elementIsPlayer(singleElement)) {
-                    Image player = GameImages.getPlayerImageByNumber(singleElement.getElement());
-                    drawElementInXYPosition(gamePane, singleElement, player);
-                } else if (elementIsBeast(singleElement)){
-                    drawElementInXYPosition(gamePane, singleElement, GameImages.beast);
-                } else if (elementIsCoin(singleElement)){
-                    drawElementInXYPosition(gamePane, singleElement, GameImages.coin);
-                } else if (elementIsSmallTreasure(singleElement)){
-                    drawElementInXYPosition(gamePane, singleElement, GameImages.smallTreasure);
-                } else if (elementIsBigTreasure(singleElement)){
-                    drawElementInXYPosition(gamePane, singleElement, GameImages.bigTreasure);
-                }
+                drawElement(gamePane, singleElement);
             }
+        }
+    }
+
+    private static void drawElement(GridPane gamePane, VisibleAreaMapPoint singleElement) {
+        if (elementIsWall(singleElement)){
+            drawElementInXYPosition(gamePane, singleElement, GameImages.wall);
+        } else if (elementIsPlayer(singleElement)) {
+            Image player = GameImages.getPlayerImageByNumber(singleElement.getElement());
+            drawElementInXYPosition(gamePane, singleElement, player);
+        } else if (elementIsBeast(singleElement)){
+            drawElementInXYPosition(gamePane, singleElement, GameImages.beast);
+        } else if (elementIsCoin(singleElement)){
+            drawElementInXYPosition(gamePane, singleElement, GameImages.coin);
+        } else if (elementIsSmallTreasure(singleElement)){
+            drawElementInXYPosition(gamePane, singleElement, GameImages.smallTreasure);
+        } else if (elementIsBigTreasure(singleElement)){
+            drawElementInXYPosition(gamePane, singleElement, GameImages.bigTreasure);
         }
     }
 
