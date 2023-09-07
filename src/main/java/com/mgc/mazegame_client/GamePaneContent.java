@@ -8,7 +8,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 
 import java.util.List;
@@ -43,10 +42,9 @@ public class GamePaneContent {
     }
 
     private static void fillRightGamePaneWithEmptyBlocks(GridPane rightGamePane) {
-        Image empty = Draw.generateImage("/gameImages/empty.png");
         for (int rowIndex = 0; rowIndex < MAP_HEIGHT; rowIndex++){
             for (int columnIndex = 0; columnIndex < MAP_WIDTH; columnIndex++) {
-                rightGamePane.add(new ImageView(empty), columnIndex, rowIndex);
+                rightGamePane.add(new ImageView(GameImages.emptyElement), columnIndex, rowIndex);
             }
         }
     }
@@ -104,7 +102,7 @@ public class GamePaneContent {
     }
 
     private static ImageView getPlayerImageView(Player player) {
-        Image playerImage = Draw.generateImage("/gameImages/player" + player.getNumber() + ".png");
+        Image playerImage = GameImages.getPlayerImageByNumber(player.number);
         ImageView playerImageView = new ImageView(playerImage);
         return playerImageView;
     }

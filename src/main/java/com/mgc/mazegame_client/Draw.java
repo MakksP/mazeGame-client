@@ -11,17 +11,15 @@ public class Draw {
     public static final int FIRST_NOT_EMPTY_ELEMENT_INDEX = 1715;
 
     public static void drawPlayerVisibleArea(GameInfoPacket gameInfoPacket, GridPane gamePane){
-        Image wallImage = generateImage("/gameImages/wall.png");
-        Image beast = generateImage("/gameImages/beast.png");
         for (List<VisibleAreaMapPoint> elementsInRow : gameInfoPacket.mapVisibleAreaRepresentation){
             for (VisibleAreaMapPoint singleElement : elementsInRow){
                 if (elementIsWall(singleElement)){
-                    drawElementInXYPosition(gamePane, singleElement, wallImage);
+                    drawElementInXYPosition(gamePane, singleElement, GameImages.wall);
                 } else if (elementIsPlayer(singleElement)) {
-                    Image player = generateImage("/gameImages/player" + singleElement.getElement() + ".png");
+                    Image player = GameImages.getPlayerImageByNumber(singleElement.getElement());
                     drawElementInXYPosition(gamePane, singleElement, player);
                 } else if (elementIsBeast(singleElement)){
-                    drawElementInXYPosition(gamePane, singleElement, beast);
+                    drawElementInXYPosition(gamePane, singleElement, GameImages.beast);
                 }
             }
         }
