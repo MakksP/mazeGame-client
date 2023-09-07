@@ -20,9 +20,27 @@ public class Draw {
                     drawElementInXYPosition(gamePane, singleElement, player);
                 } else if (elementIsBeast(singleElement)){
                     drawElementInXYPosition(gamePane, singleElement, GameImages.beast);
+                } else if (elementIsCoin(singleElement)){
+                    drawElementInXYPosition(gamePane, singleElement, GameImages.coin);
+                } else if (elementIsSmallTreasure(singleElement)){
+                    drawElementInXYPosition(gamePane, singleElement, GameImages.smallTreasure);
+                } else if (elementIsBigTreasure(singleElement)){
+                    drawElementInXYPosition(gamePane, singleElement, GameImages.bigTreasure);
                 }
             }
         }
+    }
+
+    private static boolean elementIsBigTreasure(VisibleAreaMapPoint singleElement) {
+        return singleElement.getElement() == 'T';
+    }
+
+    private static boolean elementIsSmallTreasure(VisibleAreaMapPoint singleElement) {
+        return singleElement.getElement() == 't';
+    }
+
+    private static boolean elementIsCoin(VisibleAreaMapPoint singleElement) {
+        return singleElement.getElement() == 'c';
     }
 
     private static void drawElementInXYPosition(GridPane gamePane, VisibleAreaMapPoint singleElement, Image image) {

@@ -10,6 +10,9 @@ public class GameImages {
     public static final Image player4 = Draw.generateImage("/gameImages/player4.png");
     public static final Image beast = Draw.generateImage("/gameImages/beast.png");
     public static final Image wall = Draw.generateImage("/gameImages/wall.png");
+    public static final Image bigTreasure = Draw.generateImage("/gameImages/bigTreasure.png");
+    public static final Image smallTreasure = Draw.generateImage("/gameImages/smallTreasure.png");
+    public static final Image coin = Draw.generateImage("/gameImages/coin.png");
 
 
     public static Image getPlayerImageByNumber(int playerNumber){
