@@ -13,6 +13,7 @@ public class GameImages {
     public static final Image bigTreasure = Draw.generateImage("/gameImages/bigTreasure.png");
     public static final Image smallTreasure = Draw.generateImage("/gameImages/smallTreasure.png");
     public static final Image coin = Draw.generateImage("/gameImages/coin.png");
+    public static final Image visibleTest = Draw.generateImage("/gameImages/visibleTest.png");
 
 
     public static Image getPlayerImageByNumber(int playerNumber){

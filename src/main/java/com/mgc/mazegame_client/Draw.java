@@ -32,6 +32,8 @@ public class Draw {
             drawElementInXYPosition(gamePane, singleElement, GameImages.smallTreasure);
         } else if (elementIsBigTreasure(singleElement)){
             drawElementInXYPosition(gamePane, singleElement, GameImages.bigTreasure);
+        } else if (singleElement.getElement() == '@'){
+            drawElementInXYPosition(gamePane, singleElement, GameImages.visibleTest);
         }
     }
 
