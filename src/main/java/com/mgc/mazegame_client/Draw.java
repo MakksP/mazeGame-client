@@ -22,7 +22,7 @@ public class Draw {
         if (elementIsWall(singleElement)){
             drawElementInXYPosition(gamePane, singleElement, GameImages.wall);
         } else if (elementIsPlayer(singleElement)) {
-            Image player = GameImages.getPlayerImageByNumber(singleElement.getElement());
+            Image player = GameImages.getPlayerImageByNumber(convertCharToInt(singleElement.getElement()));
             drawElementInXYPosition(gamePane, singleElement, player);
         } else if (elementIsBeast(singleElement)){
             drawElementInXYPosition(gamePane, singleElement, GameImages.beast);
@@ -33,6 +33,10 @@ public class Draw {
         } else if (elementIsBigTreasure(singleElement)){
             drawElementInXYPosition(gamePane, singleElement, GameImages.bigTreasure);
         }
+    }
+
+    private static int convertCharToInt(char element) {
+        return element - '0';
     }
 
     private static boolean elementIsBigTreasure(VisibleAreaMapPoint singleElement) {
@@ -66,7 +70,7 @@ public class Draw {
     }
 
     private static boolean elementIsPlayer(VisibleAreaMapPoint singleElement) {
-        return singleElement.getElement() == '1' || singleElement.getElement() == '2' || singleElement.getElement() == '3' || singleElement.getElement() == '4';
+        return Character.isDigit(singleElement.getElement());
     }
 
     public static Image generateImage(String path){
