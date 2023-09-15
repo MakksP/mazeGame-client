@@ -30,9 +30,12 @@ public class Draw {
             drawElementInXYPosition(gamePane, singleElement, GameImages.coin);
         } else if (elementIsSmallTreasure(singleElement)){
             drawElementInXYPosition(gamePane, singleElement, GameImages.smallTreasure);
+        } else if (elementIsDroppedCoin(singleElement)){
+            drawElementInXYPosition(gamePane, singleElement, GameImages.droppedCoins);
         } else if (elementIsBigTreasure(singleElement)){
             drawElementInXYPosition(gamePane, singleElement, GameImages.bigTreasure);
         }
+
     }
 
     private static int convertCharToInt(char element) {
@@ -49,6 +52,10 @@ public class Draw {
 
     private static boolean elementIsCoin(VisibleAreaMapPoint singleElement) {
         return singleElement.getElement() == 'c';
+    }
+
+    private static boolean elementIsDroppedCoin(VisibleAreaMapPoint singleElement) {
+        return singleElement.getElement() == 'D';
     }
 
     private static void drawElementInXYPosition(GridPane gamePane, VisibleAreaMapPoint singleElement, Image image) {
