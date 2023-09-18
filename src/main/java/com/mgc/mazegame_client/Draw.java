@@ -34,6 +34,8 @@ public class Draw {
             drawElementInXYPosition(gamePane, singleElement, GameImages.droppedCoins);
         } else if (elementIsBigTreasure(singleElement)){
             drawElementInXYPosition(gamePane, singleElement, GameImages.bigTreasure);
+        } else if (elementIsCampsite(singleElement)){
+            drawElementInXYPosition(gamePane, singleElement, GameImages.campsite);
         }
 
     }
@@ -64,6 +66,10 @@ public class Draw {
 
     private static boolean elementIsBeast(VisibleAreaMapPoint singleElement) {
         return singleElement.getElement() == '*';
+    }
+
+    private static boolean elementIsCampsite(VisibleAreaMapPoint singleElement) {
+        return singleElement.getElement() == 'A';
     }
 
     public static void clearVisibleAreaFromGamePane(GridPane gamePane){

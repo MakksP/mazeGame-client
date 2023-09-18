@@ -14,6 +14,7 @@ public class GameImages {
     public static final Image smallTreasure = Draw.generateImage("/gameImages/smallTreasure.png");
     public static final Image coin = Draw.generateImage("/gameImages/coin.png");
     public static final Image droppedCoins = Draw.generateImage("/gameImages/droppedCoins.png");
+    public static final Image campsite = Draw.generateImage("/gameImages/campsite.png");
     public static final Image visibleTest = Draw.generateImage("/gameImages/visibleTest.png");
 
 
