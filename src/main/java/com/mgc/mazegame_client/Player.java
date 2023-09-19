@@ -1,5 +1,7 @@
 package com.mgc.mazegame_client;
 
+import java.util.List;
+
 public class Player {
     public Cords playerCords;
     public Cords spawnPoint;
@@ -9,6 +11,7 @@ public class Player {
     public int deaths;
     public String name;
     public char standsOn;
+    public boolean knowCampsiteLocation;
 
     public Player(Cords cords, int playerNumber, String nick){
         this.playerCords = cords;
@@ -19,10 +22,23 @@ public class Player {
         deaths = 0;
         name = nick;
         standsOn = ' ';
+        knowCampsiteLocation = false;
     }
 
     public Player(){
 
     }
 
+    public static int convertCharToIntPlayerNumber(char number) {
+        return number - '0';
+    }
+
+    public static Player findPlayerInPlayersList(List<Player> playerList, int id){
+        for (Player player : playerList){
+            if (player.number == id){
+                return player;
+            }
+        }
+        return null;
+    }
 }

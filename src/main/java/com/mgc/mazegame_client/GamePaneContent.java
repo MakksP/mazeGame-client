@@ -3,6 +3,7 @@ package com.mgc.mazegame_client;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -27,6 +28,8 @@ public class GamePaneContent {
     public static final int INFO_PANE_WIDTH = 320;
     public static final int INFO_PANE_HGAP = 5;
     public static final int LEGEND_LABEL_FONT_SIZE = 15;
+    public static final int YOUR_INFO_COLUMN_INDEX = 0;
+    public static final int YOUR_INFO_ROW_INDEX = 4;
     public static int MAP_HEIGHT = 35;
     public static int MAP_WIDTH = 49;
     private FlowPane mainGamePane;
@@ -84,9 +87,46 @@ public class GamePaneContent {
             playerPane.getChildren().add(playerDetails);
             playerPanesContainer.getChildren().add(playerPane);
         }
-
     }
 
+    public void updateInfoPane(String yourId, List<Player> playerList){
+        if (infoPaneHasYourId()){
+            infoPane.getChildren().remove(getElementFromInfoPaneById("YOUR_INFO"));
+        }
+        int yourIdInt = Player.convertCharToIntPlayerNumber(yourId.charAt(0));
+        Player you = Player.findPlayerInPlayersList(playerList, yourIdInt);
+        String infoAboutYou = "Current cords: (" + you.playerCords.getX() + ", " + you.playerCords.getY() + ")";
+        if (you.knowCampsiteLocation){
+            infoAboutYou += "\nCampsite location: (" + PlayButton.campsiteLocation.getX() + ", " + PlayButton.campsiteLocation.getY() + ")";
+        }
+        Label yourInfoLabel = new Label(infoAboutYou);
+        yourInfoLabel.setTextFill(Color.BLACK);
+        yourInfoLabel.setFont(new Font(LEGEND_LABEL_FONT_SIZE));
+        yourInfoLabel.setId("YOUR_INFO");
+        infoPane.add(yourInfoLabel, YOUR_INFO_COLUMN_INDEX, YOUR_INFO_ROW_INDEX);
+    }
+
+    private boolean infoPaneHasYourId(){
+        for (Node element : infoPane.getChildren()){
+            if (element.getId() != null){
+                if (element.getId().equals("YOUR_INFO")){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private Node getElementFromInfoPaneById(String id){
+        for (Node element : infoPane.getChildren()){
+            if (element.getId() != null){
+                if (element.getId().equals("YOUR_INFO")){
+                    return element;
+                }
+            }
+        }
+        return null;
+    }
 
     private static GridPane initInfoPane() {
         GridPane infoPane = new GridPane();

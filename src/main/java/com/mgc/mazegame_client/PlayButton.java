@@ -2,7 +2,6 @@ package com.mgc.mazegame_client;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
@@ -14,13 +13,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import java.security.Key;
 import java.util.concurrent.atomic.AtomicReference;
 
 
 public class PlayButton extends Button {
     public static final String playButtonText = "Play";
     public static final int SCHEDULE_PERIOD_MS = 40;
+    public static Cords campsiteLocation;
     private static boolean upButtonPressed = false;
     private static boolean leftButtonPressed = false;
     private static boolean downButtonPressed = false;
@@ -33,8 +32,9 @@ public class PlayButton extends Button {
             String playerName = MenuPaneContent.getNickNameField().getText();
 
             RestTemplate restTemplate = new RestTemplate();
-            AtomicReference<ResponseEntity<String>> response = new AtomicReference<>(joinToTheGame(ip, playerName, restTemplate));
-            String yourId = response.get().getBody();
+            AtomicReference<ResponseEntity<JoinInfo>> response = new AtomicReference<>(joinToTheGame(ip, playerName, restTemplate));
+            JoinInfo joinInfo = response.get().getBody();
+            campsiteLocation = joinInfo.campsiteLocation;
 
             GamePaneContent gamePaneContent = new GamePaneContent(new FlowPane(), new GridPane(), new FlowPane());
 
@@ -44,15 +44,15 @@ public class PlayButton extends Button {
             addGameAndPlayerInfoPanesToMainPane(gamePaneContent);
 
             gameScene.setOnKeyPressed(event -> {
-                serveMoveRequest(ip, restTemplate, response, yourId, event);
+                serveMoveRequest(ip, restTemplate, response, Integer.toString(joinInfo.playerNumber), event);
             });
 
             gameScene.setOnKeyReleased(event -> {
                 serveButtonReleased(event);
             });
 
-            KeyFrame refreshGame = servePacketFromServerAndDrawAccualGameState(ip, restTemplate, yourId, gamePaneContent);
-            serveGameLeave(ip, restTemplate, yourId);
+            KeyFrame refreshGame = servePacketFromServerAndDrawActualGameState(ip, restTemplate, Integer.toString(joinInfo.playerNumber), gamePaneContent);
+            serveGameLeave(ip, restTemplate, Integer.toString(joinInfo.playerNumber));
             configureAndStartScheduler(refreshGame);
 
         });
@@ -71,12 +71,13 @@ public class PlayButton extends Button {
         });
     }
 
-    private static KeyFrame servePacketFromServerAndDrawAccualGameState(String ip, RestTemplate restTemplate, String yourId, GamePaneContent gamePaneContent) {
+    private static KeyFrame servePacketFromServerAndDrawActualGameState(String ip, RestTemplate restTemplate, String yourId, GamePaneContent gamePaneContent) {
         KeyFrame refreshGame = new KeyFrame(Duration.millis(SCHEDULE_PERIOD_MS), event -> {
             GameInfoPacket gameInfoPacket = getGameInfo(ip, restTemplate, yourId);
             Draw.clearVisibleAreaFromGamePane(gamePaneContent.getRightGamePane());
             Draw.drawPlayerVisibleArea(gameInfoPacket, gamePaneContent.getRightGamePane());
             gamePaneContent.updatePlayersInfoPane(gameInfoPacket.playerList);
+            gamePaneContent.updateInfoPane(yourId, gameInfoPacket.playerList);
 
         });
         return refreshGame;
@@ -95,20 +96,20 @@ public class PlayButton extends Button {
         }
     }
 
-    private static void serveMoveRequest(String ip, RestTemplate restTemplate, AtomicReference<ResponseEntity<String>> response, String yourId, KeyEvent event) {
+    private static void serveMoveRequest(String ip, RestTemplate restTemplate, AtomicReference<ResponseEntity<JoinInfo>> response, String yourId, KeyEvent event) {
         KeyCode pressedButton = event.getCode();
         if (pressedButton == KeyCode.UP && !upButtonPressed){
             upButtonPressed = true;
-            response.set(restTemplate.postForEntity("http://" + ip + "/move/up/" + yourId, null, String.class));
+            response.set(restTemplate.postForEntity("http://" + ip + "/move/up/" + yourId, null, JoinInfo.class));
         } else if (pressedButton == KeyCode.RIGHT && !rightButtonPressed){
             rightButtonPressed = true;
-            response.set(restTemplate.postForEntity("http://" + ip + "/move/right/" + yourId, null, String.class));
+            response.set(restTemplate.postForEntity("http://" + ip + "/move/right/" + yourId, null, JoinInfo.class));
         } else if (pressedButton == KeyCode.DOWN && !downButtonPressed){
             downButtonPressed = true;
-            response.set(restTemplate.postForEntity("http://" + ip + "/move/down/" + yourId, null, String.class));
+            response.set(restTemplate.postForEntity("http://" + ip + "/move/down/" + yourId, null, JoinInfo.class));
         } else if (pressedButton == KeyCode.LEFT && !leftButtonPressed){
             leftButtonPressed = true;
-            response.set(restTemplate.postForEntity("http://" + ip + "/move/left/" + yourId, null, String.class));
+            response.set(restTemplate.postForEntity("http://" + ip + "/move/left/" + yourId, null, JoinInfo.class));
         }
     }
 
@@ -123,8 +124,8 @@ public class PlayButton extends Button {
         return gameInfoPacketResponseEntity.getBody();
     }
 
-    private static ResponseEntity<String> joinToTheGame(String ip, String playerName, RestTemplate restTemplate) {
-        ResponseEntity<String> response = restTemplate.postForEntity("http://" + ip + "/joinGame/" + playerName, null, String.class);
+    private static ResponseEntity<JoinInfo> joinToTheGame(String ip, String playerName, RestTemplate restTemplate) {
+        ResponseEntity<JoinInfo> response = restTemplate.postForEntity("http://" + ip + "/joinGame/" + playerName, null, JoinInfo.class);
         return response;
     }
 
