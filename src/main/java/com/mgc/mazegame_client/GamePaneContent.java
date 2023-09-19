@@ -10,7 +10,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GamePaneContent {
     public static final int RIGHT_GAME_PANE_WIDTH = 1250;
@@ -20,11 +22,18 @@ public class GamePaneContent {
     public static final int V_GAP_PLAYER_INFO_PANE = 10;
     public static final int PLAYER_PANE_PADDING = 10;
     public static final int PLAYER_DETAILS_TEXT_SIZE = 18;
+    public static final int MAX_PLAYERS_COUNT = 4;
+    public static final int INFO_PANE_HEIGHT = 160;
+    public static final int INFO_PANE_WIDTH = 320;
+    public static final int INFO_PANE_HGAP = 5;
+    public static final int LEGEND_LABEL_FONT_SIZE = 15;
     public static int MAP_HEIGHT = 35;
     public static int MAP_WIDTH = 49;
     private FlowPane mainGamePane;
     private final GridPane rightGamePane;
     private final FlowPane playersInfoPane;
+    private final GridPane infoPane;
+    private final FlowPane playerPanesContainer;
 
     public GamePaneContent(FlowPane mainGamePane, GridPane rightGamePane, FlowPane playersInfoPane){
         initMainGamePane(mainGamePane);
@@ -34,6 +43,10 @@ public class GamePaneContent {
         this.playersInfoPane = playersInfoPane;
         setPaneProperties(this.playersInfoPane, Color.DIMGRAY, PLAYERS_INFO_PANE_WIDTH);
         setArrangementInPlayersInfoPane();
+        playerPanesContainer = initPlayerPanesContainer();
+        playersInfoPane.getChildren().add(playerPanesContainer);
+        infoPane = initInfoPane();
+        playersInfoPane.getChildren().add(infoPane);
     }
 
     private void setArrangementInPlayersInfoPane() {
@@ -62,16 +75,57 @@ public class GamePaneContent {
 
 
     public void updatePlayersInfoPane(List<Player> playerList){
-        clearPlayersInfoPaneIfItsEmpty();
-
+        clearPlayerPanesContainerIfItIsNotEmpty();
         for (Player player : playerList){
             FlowPane playerPane = initSinglePlayerPane();
             ImageView playerImageView = getPlayerImageView(player);
             playerPane.getChildren().add(playerImageView);
-            playersInfoPane.getChildren().add(playerPane);
             Label playerDetails = initPlayerDetails(player);
             playerPane.getChildren().add(playerDetails);
+            playerPanesContainer.getChildren().add(playerPane);
         }
+
+    }
+
+
+    private static GridPane initInfoPane() {
+        GridPane infoPane = new GridPane();
+        infoPane.setPrefSize(INFO_PANE_WIDTH, INFO_PANE_HEIGHT);
+        infoPane.setHgap(INFO_PANE_HGAP);
+        List<String> legendTags = List.of("Beast", "Players", "Valuable items", "Campsite");
+        Map<String, List<ImageView>> legendElements = initLegendElements();
+        int rowCounter = 0;
+        for (String legendTag : legendTags){
+            int columnCounter = 0;
+            Label legendLabel = new Label(legendTag);
+            legendLabel.setTextFill(Color.WHITE);
+            legendLabel.setFont(new Font(LEGEND_LABEL_FONT_SIZE));
+            infoPane.add(legendLabel, columnCounter, rowCounter);
+            for (ImageView legendElement : legendElements.get(legendTag)){
+                columnCounter++;
+                infoPane.add(legendElement, columnCounter, rowCounter);
+            }
+            rowCounter++;
+
+        }
+
+        return infoPane;
+    }
+
+    private static Map<String, List<ImageView>> initLegendElements() {
+        Map<String, List<ImageView>> legendElements = new HashMap<>();
+        legendElements.put("Beast", List.of(new ImageView(GameImages.beast)));
+        legendElements.put("Players", List.of(new ImageView(GameImages.player1), new ImageView(GameImages.player2), new ImageView(GameImages.player3), new ImageView(GameImages.player4)));
+        legendElements.put("Valuable items", List.of(new ImageView(GameImages.coin), new ImageView(GameImages.smallTreasure), new ImageView(GameImages.bigTreasure)));
+        legendElements.put("Campsite", List.of(new ImageView(GameImages.campsite)));
+        return legendElements;
+    }
+
+    private static FlowPane initPlayerPanesContainer() {
+        FlowPane playerPanesContainer = new FlowPane();
+        playerPanesContainer.setPrefSize(SINGLE_PLAYER_PANE_WIDTH, (SINGLE_PLAYER_PANE_HEIGHT + PLAYER_PANE_PADDING) * MAX_PLAYERS_COUNT);
+        playerPanesContainer.setVgap(PLAYER_PANE_PADDING);
+        return playerPanesContainer;
     }
 
     private static Label initPlayerDetails(Player player) {
@@ -91,14 +145,14 @@ public class GamePaneContent {
         return playerPane;
     }
 
-    private void clearPlayersInfoPaneIfItsEmpty() {
-        if (!playersInfoPaneIsEmpty()){
-            this.playersInfoPane.getChildren().clear();
+    private void clearPlayerPanesContainerIfItIsNotEmpty() {
+        if (!playerPanesContainerDoesNotIncludesPlayers()){
+            this.playerPanesContainer.getChildren().clear();
         }
     }
 
-    private boolean playersInfoPaneIsEmpty() {
-        return this.playersInfoPane.getChildren().size() == 0;
+    private boolean playerPanesContainerDoesNotIncludesPlayers() {
+        return this.playerPanesContainer.getChildren().size() == 0;
     }
 
     private static ImageView getPlayerImageView(Player player) {
