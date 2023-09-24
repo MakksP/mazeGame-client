@@ -36,12 +36,18 @@ public class Draw {
             drawElementInXYPosition(gamePane, singleElement, GameImages.bigTreasure);
         } else if (elementIsCampsite(singleElement)){
             drawElementInXYPosition(gamePane, singleElement, GameImages.campsite);
+        } else if (elementIsSafeZone(singleElement)){
+            drawElementInXYPosition(gamePane, singleElement, GameImages.safeZone);
         }
 
     }
 
     private static int convertCharToInt(char element) {
         return element - '0';
+    }
+
+    private static boolean elementIsSafeZone(VisibleAreaMapPoint singleElement) {
+        return singleElement.getElement() == 'S';
     }
 
     private static boolean elementIsBigTreasure(VisibleAreaMapPoint singleElement) {

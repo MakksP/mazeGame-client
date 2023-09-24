@@ -16,6 +16,7 @@ public class GameImages {
     public static final Image droppedCoins = Draw.generateImage("/gameImages/droppedCoins.png");
     public static final Image campsite = Draw.generateImage("/gameImages/campsite.png");
     public static final Image visibleTest = Draw.generateImage("/gameImages/visibleTest.png");
+    public static final Image safeZone = Draw.generateImage("/gameImages/safeZone.png");
 
 
     public static Image getPlayerImageByNumber(int playerNumber){
