@@ -27,9 +27,9 @@ public class GamePaneContent {
     public static final int INFO_PANE_HEIGHT = 160;
     public static final int INFO_PANE_WIDTH = 320;
     public static final int INFO_PANE_HGAP = 5;
-    public static final int LEGEND_LABEL_FONT_SIZE = 15;
+    public static final int LEGEND_LABEL_FONT_SIZE = 13;
     public static final int YOUR_INFO_COLUMN_INDEX = 0;
-    public static final int YOUR_INFO_ROW_INDEX = 4;
+    public static final int YOUR_INFO_ROW_INDEX = 5;
     public static int MAP_HEIGHT = 35;
     public static int MAP_WIDTH = 49;
     private FlowPane mainGamePane;
@@ -132,7 +132,7 @@ public class GamePaneContent {
         GridPane infoPane = new GridPane();
         infoPane.setPrefSize(INFO_PANE_WIDTH, INFO_PANE_HEIGHT);
         infoPane.setHgap(INFO_PANE_HGAP);
-        List<String> legendTags = List.of("Beast", "Players", "Valuable items", "Campsite");
+        List<String> legendTags = List.of("Beast", "Players", "Valuable items", "Campsite", "Safe zone");
         Map<String, List<ImageView>> legendElements = initLegendElements();
         int rowCounter = 0;
         for (String legendTag : legendTags){
@@ -158,6 +158,7 @@ public class GamePaneContent {
         legendElements.put("Players", List.of(new ImageView(GameImages.player1), new ImageView(GameImages.player2), new ImageView(GameImages.player3), new ImageView(GameImages.player4)));
         legendElements.put("Valuable items", List.of(new ImageView(GameImages.coin), new ImageView(GameImages.smallTreasure), new ImageView(GameImages.bigTreasure)));
         legendElements.put("Campsite", List.of(new ImageView(GameImages.campsite)));
+        legendElements.put("Safe zone", List.of(new ImageView(GameImages.safeZone)));
         return legendElements;
     }
 
