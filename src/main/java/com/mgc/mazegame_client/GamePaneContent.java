@@ -57,6 +57,15 @@ public class GamePaneContent {
         this.playersInfoPane.setVgap(V_GAP_PLAYER_INFO_PANE);
     }
 
+    public void updatePlayersInfoPaneColor(Player you){
+        if (you.standsOn == 'S'){
+            playersInfoPane.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+        } else {
+            playersInfoPane.setBackground(new Background(new BackgroundFill( Color.DIMGRAY, null, null)));
+        }
+
+    }
+
     private static void fillRightGamePaneWithEmptyBlocks(GridPane rightGamePane) {
         for (int rowIndex = 0; rowIndex < MAP_HEIGHT; rowIndex++){
             for (int columnIndex = 0; columnIndex < MAP_WIDTH; columnIndex++) {
@@ -89,12 +98,10 @@ public class GamePaneContent {
         }
     }
 
-    public void updateInfoPane(String yourId, List<Player> playerList){
+    public void updateInfoPane(Player you){
         if (infoPaneHasYourId()){
             infoPane.getChildren().remove(getElementFromInfoPaneById("YOUR_INFO"));
         }
-        int yourIdInt = Player.convertCharToIntPlayerNumber(yourId.charAt(0));
-        Player you = Player.findPlayerInPlayersList(playerList, yourIdInt);
         String infoAboutYou = "Current cords: (" + you.playerCords.getX() + ", " + you.playerCords.getY() + ")";
         if (you.knowCampsiteLocation){
             infoAboutYou += "\nCampsite location: (" + PlayButton.campsiteLocation.getX() + ", " + PlayButton.campsiteLocation.getY() + ")";

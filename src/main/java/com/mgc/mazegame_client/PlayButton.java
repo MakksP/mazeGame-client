@@ -76,12 +76,17 @@ public class PlayButton extends Button {
             GameInfoPacket gameInfoPacket = getGameInfo(ip, restTemplate, yourId);
             Draw.clearVisibleAreaFromGamePane(gamePaneContent.getRightGamePane());
             Draw.drawPlayerVisibleArea(gameInfoPacket, gamePaneContent.getRightGamePane());
+
+            Player you = Player.getYoursPlayerInstance(gameInfoPacket, yourId);
+
             gamePaneContent.updatePlayersInfoPane(gameInfoPacket.playerList);
-            gamePaneContent.updateInfoPane(yourId, gameInfoPacket.playerList);
+            gamePaneContent.updateInfoPane(you);
+            gamePaneContent.updatePlayersInfoPaneColor(you);
 
         });
         return refreshGame;
     }
+
 
     private void serveButtonReleased(KeyEvent event) {
         KeyCode releasedButton = event.getCode();
@@ -119,8 +124,7 @@ public class PlayButton extends Button {
     }
 
     private static GameInfoPacket getGameInfo(String ip, RestTemplate restTemplate, String yourId) {
-        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-        ResponseEntity<GameInfoPacket> gameInfoPacketResponseEntity = restTemplate.getForEntity("http://" + ip + "/getVisibleArea/" + yourId, GameInfoPacket.class);
+        ResponseEntity<GameInfoPacket> gameInfoPacketResponseEntity = restTemplate.getForEntity("http://" + ip + "/getGameData/" + yourId, GameInfoPacket.class);
         return gameInfoPacketResponseEntity.getBody();
     }
 

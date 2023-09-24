@@ -21,7 +21,7 @@ public class Player {
         number = playerNumber;
         deaths = 0;
         name = nick;
-        standsOn = ' ';
+        standsOn = 'S';
         knowCampsiteLocation = false;
     }
 
@@ -40,5 +40,10 @@ public class Player {
             }
         }
         return null;
+    }
+
+    public static Player getYoursPlayerInstance(GameInfoPacket gameInfoPacket, String yourId) {
+        int yourIdInt = Player.convertCharToIntPlayerNumber(yourId.charAt(0));
+        return Player.findPlayerInPlayersList(gameInfoPacket.playerList, yourIdInt);
     }
 }
